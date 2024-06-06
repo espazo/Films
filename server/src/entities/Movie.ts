@@ -27,7 +27,7 @@ export class Movie {
 
     @IsNotEmpty({message: '是否热映不能为空'})
     @Type(() => Boolean)
-    public isNot: boolean = false;
+    public isHot: boolean = false;
 
     @IsNotEmpty({message: '是否即将上映不能为空'})
     @Type(() => Boolean)
