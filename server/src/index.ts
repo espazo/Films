@@ -1,23 +1,9 @@
 import 'reflect-metadata';
-import {MovieService} from "./services/MovieService";
+import Express from 'express';
+import MovieRouter from './routes/MovieRoute';
 
-function getRandom(min: number, max: number) {
-    const dec = max - min;
-    return Math.floor(Math.random() * dec + min);
-}
+const app = Express();
 
-const condi: any = {
-    page: 2,
-    limit: 5,
-    key: '10',
-};
-MovieService.find(condi).then(result => {
-    if (result.errors.length > 0) {
-        console.log(result.errors);
-    } else {
-        result.data.forEach(m => {
-            console.log(m.name);
-        });
-        console.log('total', result.count);
-    }
-});
+app.use('/api/movie', MovieRouter);
+
+app.listen(3000);
