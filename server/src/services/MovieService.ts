@@ -1,6 +1,8 @@
 import {Movie} from "../entities/Movie";
 import {IMovie} from "../db/MovieSchema";
 import {MovieModel} from "../db/db";
+import {SearchCondition} from "../entities/SearchCondition";
+import {ISearchResult} from "../entities/CommonTypes";
 
 export class MovieService {
     public static async add(movie: Movie): Promise<IMovie | string[]> {
@@ -28,7 +30,35 @@ export class MovieService {
         await MovieModel.deleteOne({_id: id});
     }
 
-    public static async find(id: string): Promise<IMovie | null> {
+    public static async findById(id: string): Promise<IMovie | null> {
         return MovieModel.findById({_id: id});
+    }
+
+    public static async find(condition: SearchCondition): Promise<ISearchResult<IMovie>> {
+        const conObj = SearchCondition.transform(condition);
+        const errors = await conObj.validateThis();
+        if (errors.length > 0) {
+            return {
+                count: 0,
+                data: [],
+                errors,
+            };
+        }
+
+        const movies = await MovieModel.find({
+            name: {$regex: new RegExp(conObj.key)},
+        })
+            .skip((conObj.page - 1) * conObj.limit)
+            .limit(conObj.limit);
+
+        const count = await MovieModel.find({
+            name: {$regex: new RegExp(conObj.key)},
+        }).countDocuments();
+
+        return {
+            count,
+            data: movies,
+            errors: [],
+        };
     }
 }
