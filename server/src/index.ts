@@ -4,6 +4,8 @@ import MovieRouter from './routes/MovieRoute';
 
 const app = Express();
 
+app.use(Express.json());
+
 app.use('/api/movie', MovieRouter);
 
 app.listen(3000);
