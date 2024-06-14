@@ -71,18 +71,14 @@ const deleteMovie: MovieReducer<DeleteAction> = function (prevState, action) {
 export default function (preyState: IMovieState = defaultState, action: MovieActions) {
     switch (action.type) {
         case 'movie_delete':
-            deleteMovie(preyState, action);
-            break;
+            return deleteMovie(preyState, action);
         case 'movie_save':
-            saveMovie(preyState, action);
-            break;
+            return saveMovie(preyState, action);
         case 'movie_set_condition':
-            setCondition(preyState, action);
-            break;
+            return setCondition(preyState, action);
         case 'movie_set_loading':
-            setLoading(preyState, action);
-            break;
+            return setLoading(preyState, action);
         default:
-            break;
+            return preyState;
     }
 };
