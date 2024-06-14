@@ -1,11 +1,11 @@
 import React from 'react';
-import Layout from './pages/Layout';
+import _Layout from './pages/_Layout';
 import {BrowserRouter, Route} from "react-router-dom";
 
 function App() {
     return (
         <BrowserRouter>
-            <Route path='/' component={Layout}></Route>
+            <Route path='/' component={_Layout}></Route>
         </BrowserRouter>
     );
 }
