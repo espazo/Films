@@ -5,7 +5,7 @@ import {thunk, ThunkMiddleware} from 'redux-thunk';
 
 export const store = createStore(
     rootReducer as any,
-    applyMiddleware(thunk as ThunkMiddleware<IRootState>, logger),
+    applyMiddleware(thunk as ThunkMiddleware<IRootState>, logger as any),
 );
 
 store.subscribe(() => {
