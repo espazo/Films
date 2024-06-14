@@ -6,13 +6,16 @@ import {store} from "./redux/store";
 import MovieAction from "./redux/actions/MovieAction";
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+    document.getElementById('root') as HTMLElement
 );
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+    <React.StrictMode>
+        <App/>
+    </React.StrictMode>
 );
 
-store.dispatch(MovieAction.setLoadingAction(true));
-store.dispatch(MovieAction.setConditionAction({page: 2}));
+store.dispatch(MovieAction.fetchMovies({
+    page: 2,
+})).then(() => {
+    store.dispatch(MovieAction.deleteMovie('6663e9fadc66c3a3ca827fbd'));
+});

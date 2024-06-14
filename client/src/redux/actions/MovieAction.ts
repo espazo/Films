@@ -1,6 +1,8 @@
 import {IAction} from "./ActionTypes";
-import {IMovie} from "../../services/MovieService";
+import {IMovie, MovieService} from "../../services/MovieService";
 import {ISearchCondition} from "../../services/CommonTypes";
+import {ThunkAction} from 'redux-thunk';
+import {IRootState} from "../reducers/RootReducer";
 
 export type SaveMoviesAction = IAction<'movie_save', {
     movies: IMovie[],
@@ -46,9 +48,33 @@ function deleteAction(id: string): DeleteAction {
 
 export type MovieActions = SaveMoviesAction | SetLoadingAction | SetConditionAction | DeleteAction;
 
+function fetchMovies(condition: ISearchCondition):
+    ThunkAction<Promise<void>, IRootState, any, MovieActions> {
+    return async (dispatch, getState) => {
+        dispatch(setLoadingAction(true));
+        dispatch(setConditionAction(condition));
+        const curCondition = getState().movie.condition;
+        const resp = await MovieService.getMovies(curCondition);
+        dispatch(saveMovieAction(resp.data, resp.total));
+        dispatch(setLoadingAction(false));
+    };
+}
+
+function deleteMovie(id: string):
+    ThunkAction<Promise<void>, IRootState, any, MovieActions> {
+    return async (dispatch, getState) => {
+        dispatch(setLoadingAction(true));
+        await MovieService.delete(id);
+        dispatch(deleteAction(id));
+        dispatch(setLoadingAction(false));
+    };
+}
+
 export default {
     saveMovieAction,
     setLoadingAction,
     setConditionAction,
     deleteAction,
+    fetchMovies,
+    deleteMovie,
 };

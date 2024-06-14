@@ -16,6 +16,7 @@ export interface IMovieState {
     condition: IMovieCondition,
     total: number,
     isLoading: boolean,
+    totalPage: number,
 }
 
 const defaultState: IMovieState = {
@@ -27,6 +28,7 @@ const defaultState: IMovieState = {
     },
     total: 0,
     isLoading: false,
+    totalPage: 0,
 };
 
 type MovieReducer<A> = Reducer<IMovieState, A>;
@@ -40,17 +42,21 @@ const saveMovie: MovieReducer<SaveMoviesAction> = function (prevState, action) {
         ...prevState,
         data: action.payload.movies,
         total: action.payload.total,
+        totalPage: Math.ceil(action.payload.total / prevState.condition.limit),
     };
 }
 
 const setCondition: MovieReducer<SetConditionAction> = function (prevState, action) {
-    return {
+    const newState = {
         ...prevState,
         condition: {
             ...prevState.condition,
             ...action.payload,
         },
     };
+
+    newState.totalPage = Math.ceil(newState.total / newState.condition.limit);
+    return newState;
 }
 
 const setLoading: MovieReducer<SetLoadingAction> = function (prevState, action) {
@@ -65,6 +71,7 @@ const deleteMovie: MovieReducer<DeleteAction> = function (prevState, action) {
         ...prevState,
         data: prevState.data.filter(m => m._id != action.payload),
         total: prevState.total - 1,
+        totalPage: Math.ceil((prevState.total - 1) / prevState.condition.limit),
     };
 }
 

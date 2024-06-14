@@ -1,14 +1,11 @@
 import {applyMiddleware, createStore} from 'redux';
-import {rootReducer} from "./reducers/RootReducer";
+import {IRootState, rootReducer} from "./reducers/RootReducer";
 import logger from 'redux-logger';
-
-// export const store = createStore(
-//     rootReducer,
-//     applyMiddleware(logger),
-// );
+import {thunk, ThunkMiddleware} from 'redux-thunk';
 
 export const store = createStore(
-    rootReducer,
+    rootReducer as any,
+    applyMiddleware(thunk as ThunkMiddleware<IRootState>, logger),
 );
 
 store.subscribe(() => {
