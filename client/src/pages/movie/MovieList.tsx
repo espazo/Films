@@ -33,6 +33,14 @@ function mapDispatchToProps(dispatch: Dispatch<any>): IMovieEvent {
             dispatch(MovieAction.fetchMovies({
                 page,
             }));
+        },
+        onKeyChange(key: string) {
+             dispatch(MovieAction.setConditionAction({key}));
+        },
+        onSearch() {
+            dispatch(MovieAction.fetchMovies({
+                page: 1,
+            }));
         }
     };
 }

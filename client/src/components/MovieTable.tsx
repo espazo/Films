@@ -6,7 +6,7 @@ import {ColumnProps, TablePaginationConfig} from "antd/lib/table";
 import defaultPosterImg from '../assets/na.png';
 import {SwitchType} from "../services/CommonTypes";
 import {NavLink} from "react-router-dom";
-import {PaginationConfig} from "antd/lib/pagination";
+import Input from "antd/lib/input/Input";
 
 export interface IMovieEvent {
     onLoad(): void,
@@ -20,6 +20,10 @@ export interface IMovieEvent {
     onDelete(id: string): Promise<void>,
 
     onChange(page: number): void,
+
+    onKeyChange(key: string): void,
+
+    onSearch(): void,
 }
 
 export default class extends React.Component<IMovieState & IMovieEvent> {
@@ -29,19 +33,45 @@ export default class extends React.Component<IMovieState & IMovieEvent> {
         }
     }
 
+    private getFilterDropDown(p: object) {
+        return <div style={{padding: 8}}>
+            <Input
+                style={{width: 188, marginBottom: 8, display: 'block'}}
+                value={this.props.condition.key}
+                onChange={e => this.props.onKeyChange(e.target.value)}
+                onPressEnter={() => this.props.onSearch()}
+            />
+            <Button
+                icon='search'
+                type='primary' size='small' style={{width: 90, marginRight: 8}}
+                onClick={() => this.props.onSearch()}
+            />
+            <Button
+                icon='reset'
+                size='small' style={{width: 90}}
+                onClick={() => {
+                    this.props.onKeyChange('');
+                    this.props.onSearch();
+                }}
+            />
+        </div>;
+    }
+
     private getColumns(): ColumnProps<IMovie>[] {
         return [
             {
                 title: 'poster',
                 dataIndex: 'poster',
                 render(poster: string) {
-                    return poster ? <img className='tablePoster' src={poster}/> :
-                        <img className='tablePoster' src={defaultPosterImg}/>;
+                    return poster ? <img alt='' className='tablePoster' src={poster}/> :
+                        <img alt='' className='tablePoster' src={defaultPosterImg}/>;
                 },
             },
             {
                 title: 'name',
                 dataIndex: 'name',
+                filterDropdown: this.getFilterDropDown.bind(this),
+                // filterIcon: <Icon />
             },
             {
                 title: 'areas',
