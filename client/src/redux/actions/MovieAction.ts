@@ -1,6 +1,6 @@
 import {IAction} from "./ActionTypes";
 import {IMovie, MovieService} from "../../services/MovieService";
-import {ISearchCondition} from "../../services/CommonTypes";
+import {ISearchCondition, SwitchType} from "../../services/CommonTypes";
 import {ThunkAction} from 'redux-thunk';
 import {IRootState} from "../reducers/RootReducer";
 
@@ -46,7 +46,29 @@ function deleteAction(id: string): DeleteAction {
     };
 }
 
-export type MovieActions = SaveMoviesAction | SetLoadingAction | SetConditionAction | DeleteAction;
+export type MovieChangeSwitchAction = IAction<'movie_switch', {
+    type: SwitchType,
+    checked: boolean,
+    id: string,
+}>
+
+function changeSwitchAction(type: SwitchType, checked: boolean, id: string): MovieChangeSwitchAction {
+    return {
+        type: 'movie_switch',
+        payload: {
+            type,
+            checked,
+            id,
+        },
+    };
+}
+
+export type MovieActions =
+    SaveMoviesAction
+    | SetLoadingAction
+    | SetConditionAction
+    | DeleteAction
+    | MovieChangeSwitchAction;
 
 function fetchMovies(condition: ISearchCondition):
     ThunkAction<Promise<void>, IRootState, any, MovieActions> {
@@ -70,6 +92,16 @@ function deleteMovie(id: string):
     };
 }
 
+function changeSwitch(kind: SwitchType, checked: boolean, id: string):
+    ThunkAction<Promise<void>, IRootState, any, MovieActions> {
+    return async (dispatch, getState) => {
+        dispatch(changeSwitchAction(kind, checked, id));
+        await MovieService.edit(id, {
+            [kind]: checked,
+        });
+    };
+}
+
 export default {
     saveMovieAction,
     setLoadingAction,
@@ -77,4 +109,6 @@ export default {
     deleteAction,
     fetchMovies,
     deleteMovie,
+    changeSwitchAction,
+    changeSwitch,
 };
