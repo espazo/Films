@@ -1,10 +1,12 @@
 import React from 'react';
 import {IMovieState} from "../redux/reducers/MovieReducer";
-import {Switch, Table} from 'antd';
+import {Button, message, Popconfirm, Switch, Table} from 'antd';
 import {IMovie} from "../services/MovieService";
-import {ColumnProps} from "antd/lib/table";
+import {ColumnProps, TablePaginationConfig} from "antd/lib/table";
 import defaultPosterImg from '../assets/na.png';
 import {SwitchType} from "../services/CommonTypes";
+import {NavLink} from "react-router-dom";
+import {PaginationConfig} from "antd/lib/pagination";
 
 export interface IMovieEvent {
     onLoad(): void,
@@ -14,6 +16,10 @@ export interface IMovieEvent {
         newState: boolean,
         id: string,
     ): void,
+
+    onDelete(id: string): Promise<void>,
+
+    onChange(page: number): void,
 }
 
 export default class extends React.Component<IMovieState & IMovieEvent> {
@@ -85,12 +91,56 @@ export default class extends React.Component<IMovieState & IMovieEvent> {
                     }}/>
                 }
             },
+            {
+                title: 'operate',
+                dataIndex: '_id',
+                render: (id: string, record) => {
+                    return <div>
+                        <NavLink to={'/movie/edit/' + id}>
+                            <Button type='primary' size='small'>edit</Button>
+                        </NavLink>
+                        <Popconfirm title='Are you sure delete this task?'
+                                    onConfirm={async () => {
+                                        await this.props.onDelete(id);
+                                        message.success('delete success');
+                                    }}
+                                    okText='sure'
+                                    cancelText='cancel'
+                        >
+                            <Button type='link'>delete</Button>
+                        </Popconfirm>
+                    </div>;
+                },
+            },
         ];
+    }
+
+    getPageConfig(): false | TablePaginationConfig {
+        if (this.props.total == 0) {
+            return false;
+        }
+        return {
+            current: this.props.condition.page,
+            pageSize: this.props.condition.limit,
+            total: this.props.total,
+        };
+    }
+
+    handleChange(pagination: TablePaginationConfig) {
+        const current = pagination.current;
+        this.props.onChange(current!);
     }
 
     render() {
         return (
-            <Table rowKey='_id' dataSource={this.props.data} columns={this.getColumns()}/>
+            <Table
+                rowKey='_id'
+                dataSource={this.props.data}
+                columns={this.getColumns()}
+                pagination={this.getPageConfig()}
+                onChange={this.handleChange.bind(this)}
+                loading={this.props.isLoading}
+            />
         );
     }
 }

@@ -25,6 +25,14 @@ function mapDispatchToProps(dispatch: Dispatch<any>): IMovieEvent {
                 checked,
                 id,
             ));
+        },
+        async onDelete(id: string): Promise<void> {
+            await dispatch(MovieAction.deleteMovie(id));
+        },
+        onChange(page: number) {
+            dispatch(MovieAction.fetchMovies({
+                page,
+            }));
         }
     };
 }
