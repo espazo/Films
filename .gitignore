@@ -1,4 +1,5 @@
 dist
+.idea
 upload
 node_modules
 
