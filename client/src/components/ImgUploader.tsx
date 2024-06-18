@@ -1,7 +1,7 @@
 import React from 'react';
 import {message, Modal, Upload} from "antd";
-import {UploadFile} from "antd/lib";
 import {IResponseData, IResponseError} from "../services/CommonTypes";
+import {UploadFile} from "antd/es/upload/interface";
 
 interface IImgUploaderProps {
     value?: string,
@@ -18,7 +18,7 @@ export default class extends React.Component<IImgUploaderProps, IImgStatus> {
 
     private getUploadContent() {
         if (this.props.value) {
-            return null;
+            return <div></div>;
         } else {
             return <div>
                 +
@@ -31,9 +31,11 @@ export default class extends React.Component<IImgUploaderProps, IImgStatus> {
         const curImgUrl = this.props.value;
         if (curImgUrl) {
             return [{
+                size: 0,
                 uid: curImgUrl,
                 name: curImgUrl,
                 url: curImgUrl,
+                type: curImgUrl,
             }];
         }
         return [];
@@ -62,6 +64,7 @@ export default class extends React.Component<IImgUploaderProps, IImgStatus> {
     render() {
         return (
             <div>
+                {/*@ts-ignore*/}
                 <Upload
                     action='/api/upload'
                     name='imgfile'
@@ -78,6 +81,7 @@ export default class extends React.Component<IImgUploaderProps, IImgStatus> {
                 >
                     {this.getUploadContent()}
                 </Upload>
+                {/*@ts-ignore*/}
                 <Modal visible={this.state.showModal} footer={null} onCancel={() => {
                     this.setState({
                         showModal: false,

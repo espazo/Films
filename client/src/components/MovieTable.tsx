@@ -2,7 +2,7 @@ import React from 'react';
 import {IMovieState} from "../redux/reducers/MovieReducer";
 import {Button, message, Popconfirm, Switch, Table} from 'antd';
 import {IMovie} from "../services/MovieService";
-import {ColumnProps, TablePaginationConfig} from "antd/lib/table";
+import {ColumnProps, PaginationConfig} from "antd/lib/table";
 import defaultPosterImg from '../assets/na.png';
 import {SwitchType} from "../services/CommonTypes";
 import {NavLink} from "react-router-dom";
@@ -145,7 +145,7 @@ export default class extends React.Component<IMovieState & IMovieEvent> {
         ];
     }
 
-    getPageConfig(): false | TablePaginationConfig {
+    getPageConfig(): false | PaginationConfig {
         if (this.props.total == 0) {
             return false;
         }
@@ -156,7 +156,7 @@ export default class extends React.Component<IMovieState & IMovieEvent> {
         };
     }
 
-    handleChange(pagination: TablePaginationConfig) {
+    handleChange(pagination: PaginationConfig) {
         const current = pagination.current;
         this.props.onChange(current!);
     }
