@@ -9,6 +9,7 @@ import {RouteComponentProps, withRouter} from "react-router";
 interface IFormProp extends RouteComponentProps {
     form: WrappedFormUtils,
     onSubmit: (movie: IMovie) => Promise<string>;
+    movie?: IMovie,
 }
 
 const formItemLayout = {
@@ -43,6 +44,7 @@ class MovieForm extends React.Component<IFormProp> {
         this.props.form.validateFields(async errors => {
             if (!errors) {
                 const formData = this.props.form.getFieldsValue();
+                console.log(formData);
                 const result: string = await this.props.onSubmit(formData as IMovie);
                 if (result) {
                     message.error(`add fail: ${result}`);
@@ -98,6 +100,7 @@ class MovieForm extends React.Component<IFormProp> {
             <Form.Item label='item is hot'>
                 {getFieldDecorator<IMovie>('isHot', {
                     initialValue: false,
+                    valuePropName: 'checked',
                 })(
                     <Switch/>
                 )}
@@ -105,6 +108,7 @@ class MovieForm extends React.Component<IFormProp> {
             <Form.Item label='item is coming'>
                 {getFieldDecorator<IMovie>('isComing', {
                     initialValue: false,
+                    valuePropName: 'checked',
                 })(
                     <Switch/>
                 )}
@@ -112,6 +116,7 @@ class MovieForm extends React.Component<IFormProp> {
             <Form.Item label='item is classic'>
                 {getFieldDecorator<IMovie>('isClassic', {
                     initialValue: false,
+                    valuePropName: 'checked',
                 })(
                     <Switch/>
                 )}
@@ -129,5 +134,25 @@ class MovieForm extends React.Component<IFormProp> {
     }
 }
 
+type MovieFields = {
+    [P in Exclude<keyof IMovie, '_id'>]: any;
+}
 
-export default withRouter(Form.create<IFormProp>()(MovieForm));
+function getDefaultField(movie: IMovie): MovieFields {
+    const obj: any = {};
+    for (const key in movie) {
+        obj[key] = Form.createFormField({
+            value: movie[key as keyof IMovie],
+        });
+    }
+
+    return obj;
+}
+
+export default withRouter(Form.create<IFormProp>({
+    mapPropsToFields: props => {
+        if (props.movie) {
+            return getDefaultField(props.movie);
+        }
+    }
+})(MovieForm));
