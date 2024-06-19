@@ -1,13 +1,20 @@
 import React from "react";
 import MovieForm from "../../components/MovieForm";
-import ImgUploader from "../../components/ImgUploader";
+import {MovieService} from "../../services/MovieService";
 
 export default class extends React.Component {
 
     render() {
         return (
             <div>
-                <MovieForm/>
+                <MovieForm onSubmit={async (movie) => {
+                    const resp = await MovieService.add(movie);
+                    if (resp.data) {
+                        return '';
+                    } else {
+                        return resp.err;
+                    }
+                }}/>
             </div>
         );
     }

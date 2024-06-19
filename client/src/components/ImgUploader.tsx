@@ -6,7 +6,7 @@ import {UploadFile} from "antd/es/upload/interface";
 interface IImgUploaderProps {
     value?: string,
 
-    onChange(imgUrl: string): void,
+    onChange?(imgUrl: string): void,
 }
 
 interface IImgStatus {
@@ -18,7 +18,7 @@ export default class extends React.Component<IImgUploaderProps, IImgStatus> {
 
     private getUploadContent() {
         if (this.props.value) {
-            return <div></div>;
+            return null;
         } else {
             return <div>
                 +
@@ -53,7 +53,9 @@ export default class extends React.Component<IImgUploaderProps, IImgStatus> {
             message.error(response.err);
         } else {
             message.info('upload success');
-            this.props.onChange(response.data!);
+            if (this.props.onChange) {
+                this.props.onChange(response.data!);
+            }
         }
     }
 
@@ -72,7 +74,11 @@ export default class extends React.Component<IImgUploaderProps, IImgStatus> {
                     listType='picture-card'
                     fileList={this.getFileList()}
                     customRequest={this.handleRequest.bind(this)}
-                    onRemove={() => this.props.onChange('')}
+                    onRemove={() => {
+                        if (this.props.onChange) {
+                            this.props.onChange('')
+                        }
+                    }}
                     onPreview={() => {
                         this.setState({
                             showModal: true,
