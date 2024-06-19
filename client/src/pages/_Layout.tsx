@@ -5,7 +5,6 @@ import MovieList from "./movie/MovieList";
 import AddMovie from "./movie/AddMovie";
 import EditMovie from "./movie/EditMovie";
 import {Layout, Menu} from 'antd';
-import Icon from "antd/es/icon";
 
 const {
     Header, Sider, Content,
